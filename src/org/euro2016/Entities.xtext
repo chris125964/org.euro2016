@@ -1,0 +1,57 @@
+grammar org.euro2016.Entities with org.eclipse.xtext.common.Terminals
+
+generate entities "http://www.euro2016.org/Entities"
+
+Model:
+	Package
+	entities+=Entity*;
+	
+Package:
+	'package' package=ID ('.' ID )*;
+
+Entity:
+	annotations+=EntityAnnotation*
+	'entity' name=ID ('(' annotation=STRING ')')?  '{'
+	attributes+=Attribute*
+	'}';
+
+Attribute:
+	annotations+=AttributeAnnotation*
+	type=AttributeType name=ID ';';
+
+AttributeType:
+	elementType=ElementType (array?='[' (length=INT)? ']')?;
+
+ElementType:
+	BasicType | EntityType;
+
+BasicType:
+	typeName=('Long' | 'string' | 'char' | 'int' | 'boolean');
+
+EntityType:
+	entity=[Entity];
+	
+AttributeAnnotation:
+	NotNull | Identifier | Pattern | ManyToOne | GeneratedValue
+;
+
+NotNull:
+	notNull='@NotNull';
+
+Identifier:
+	identifier='@Id';
+	
+Pattern:
+	pattern='@Pattern' '(' regexp=STRING ',' message=STRING ')';
+
+ManyToOne:
+	manyToOne='@ManyToOne';
+	
+GeneratedValue:
+	generatedValue='@GeneratedValue';
+
+EntityAnnotation:
+	nq=NamedQuery;
+
+NamedQuery:
+	namedQuery='@NamedQuery' '(' klasse=STRING ',' finder=STRING ',' select=STRING ')';
